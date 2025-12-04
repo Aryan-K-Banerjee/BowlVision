@@ -1,0 +1,17 @@
+# Core CV
+mediapipe
+opencv-python
+numpy
+pandas
+
+# Config + reporting
+PyYAML
+Jinja2
+
+# UI TBD
+
+
+# RAG
+faiss-cpu
+sentence-transformers
+rank-bm25

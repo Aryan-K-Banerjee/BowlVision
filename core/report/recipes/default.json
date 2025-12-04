@@ -1,0 +1,129 @@
+{
+  "panels": [
+    {
+      "group": "back_view",
+      "panel_slug": "jump",
+      "view": "back",
+      "frame_source": "event:jump",
+      "crop_policy": "SQUARE_AROUND_BOWLER_0_25MARGIN",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": []
+    },
+    {
+      "group": "back_view",
+      "panel_slug": "bfc",
+      "view": "back",
+      "frame_source": "event:bfc",
+      "crop_policy": "SQUARE_AROUND_BOWLER_0_25MARGIN",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": []
+    },
+    {
+      "group": "back_view",
+      "panel_slug": "ffc",
+      "view": "back",
+      "frame_source": "event:ffc",
+      "crop_policy": "SQUARE_AROUND_BOWLER_0_25MARGIN",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": []
+    },
+    {
+      "group": "back_view",
+      "panel_slug": "release",
+      "view": "back",
+      "frame_source": "event:release",
+      "crop_policy": "SQUARE_AROUND_BOWLER_0_25MARGIN",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": []
+    },
+    {
+      "group": "side_view",
+      "panel_slug": "jump",
+      "view": "side",
+      "frame_source": "event:jump",
+      "crop_policy": "SQUARE_AROUND_BOWLER_0_25MARGIN",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": []
+    },
+    {
+      "group": "side_view",
+      "panel_slug": "bfc",
+      "view": "side",
+      "frame_source": "event:bfc",
+      "crop_policy": "SQUARE_AROUND_BOWLER_0_25MARGIN",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": []
+    },
+    {
+      "group": "side_view",
+      "panel_slug": "ffc",
+      "view": "side",
+      "frame_source": "event:ffc",
+      "crop_policy": "SQUARE_AROUND_BOWLER_0_25MARGIN",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": []
+    },
+    {
+      "group": "side_view",
+      "panel_slug": "release",
+      "view": "side",
+      "frame_source": "event:release",
+      "crop_policy": "SQUARE_AROUND_BOWLER_0_25MARGIN",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": []
+    },
+    {
+      "group": "front_leg_brace",
+      "panel_slug": "ffc_closeup",
+      "view": "side",
+      "frame_source": "metric:front_leg_brace:ffc",
+      "crop_policy": "FOCUS_FRONT_LEG",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": ["front_knee_angle"]
+    },
+    {
+      "group": "front_leg_brace",
+      "panel_slug": "release_closeup",
+      "view": "side",
+      "frame_source": "metric:front_leg_brace:release",
+      "crop_policy": "FOCUS_FRONT_LEG",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": ["front_knee_angle"]
+    },
+    {
+      "group": "front_leg_brace",
+      "panel_slug": "ffc_release_composite",
+      "view": "side",
+      "frame_source": "metric:front_leg_brace:ffc",
+      "crop_policy": "FOCUS_FRONT_LEG",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": ["front_knee_angle"],
+      "composite_with": {
+        "frame_source": "metric:front_leg_brace:release",
+        "opacity": [0.5, 0.5]
+      }
+    },
+    {
+      "group": "front_leg_brace",
+      "panel_slug": "max_diff_closeup",
+      "view": "side",
+      "frame_source": "metric:front_leg_brace:max_diff",
+      "crop_policy": "FOCUS_FRONT_LEG",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": ["front_knee_angle"]
+    },
+    {
+      "group": "front_leg_brace",
+      "panel_slug": "ffc_max_diff_composite",
+      "view": "side",
+      "frame_source": "metric:front_leg_brace:ffc",
+      "crop_policy": "FOCUS_FRONT_LEG",
+      "variants": ["original", "skeleton", "overlay"],
+      "overlays": ["front_knee_angle"],
+      "composite_with": {
+        "frame_source": "metric:front_leg_brace:max_diff",
+        "opacity": [0.5, 0.5]
+      }
+    }
+  ]
+}

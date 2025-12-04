@@ -1,0 +1,102 @@
+{
+    "analyzed_metrics": {
+        "front_leg_brace": {
+            "front_knee_angle_at_ffc": {
+                "value": {
+                    "angle": 191.36331464346986,
+                    "frames": [
+                        75
+                    ]
+                },
+                "assessment": "ideal",
+                "description": "Ideal: 170 degrees or more"
+            },
+            "front_knee_angle_at_release": {
+                "value": {
+                    "angle": 190.08988566608556,
+                    "frames": [
+                        78
+                    ]
+                },
+                "assessment": "ideal",
+                "description": "Ideal: 170 degrees or more"
+            },
+            "difference_ffc_release": {
+                "value": {
+                    "angle": -1.2734289773842988,
+                    "frames": [
+                        75,
+                        78
+                    ]
+                },
+                "assessment": "ideal",
+                "description": "Ideal: difference less than or equal to 5 degrees"
+            },
+            "max_flex_from_ffc": {
+                "value": {
+                    "angle": 182.6898323263423,
+                    "frames": [
+                        77
+                    ]
+                },
+                "assessment": "ideal",
+                "description": "Ideal: 170 degrees or more"
+            },
+            "max_difference_ffc_flex": {
+                "value": {
+                    "angle": 8.673482317127565,
+                    "frames": [
+                        75,
+                        77
+                    ]
+                },
+                "assessment": "ideal",
+                "description": "Ideal: max deviation less than or equal to 10 degrees"
+            }
+        },
+        "hip_vs_knee_dominance": {
+            "back_knee_angle_back_view": {
+                "value": {
+                    "angle": 104.60392150642431,
+                    "frames": [
+                        67
+                    ]
+                },
+                "assessment": "knee_dominant",
+                "description": "Back view: 104.6\u00b0"
+            },
+            "back_knee_angle_side_view": {
+                "value": {
+                    "angle": 174.80578307585898,
+                    "frames": [
+                        66
+                    ]
+                },
+                "assessment": "knee_dominant",
+                "description": "Side view: 174.8\u00b0"
+            },
+            "classification": {
+                "value": "knee_dominant",
+                "assessment": "knee_dominant",
+                "description": "Knee dominant (back view angle 104.6\u00b0 < 150\u00b0)"
+            }
+        },
+        "bowler_alignment": {
+            "back_foot_xy_angle": {
+                "value": {
+                    "angle": 70.031865875169,
+                    "frames": [
+                        66
+                    ]
+                },
+                "assessment": "side_on",
+                "description": "Back foot orientation: 70.0\u00b0"
+            },
+            "classification": {
+                "value": "side_on",
+                "assessment": "side_on",
+                "description": "Side-on alignment (angle: 70.0\u00b0, 60+\u00b0 range)"
+            }
+        }
+    }
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BowlVision Report - {{session_name}}</title>
+    <link rel="stylesheet" href="static/report.css">
+</head>
+<body>
+    <header>
+        <h1>BowlVision Session Report</h1>
+        <div class="metadata">
+            <div class="session-info">
+                <h2>{{session_name}}</h2>
+                <p>{{session_description}}</p>
+                <p class="date">Date: {{session_date}}</p>
+            </div>
+            <div class="bowler-info">
+                <h3>{{bowler_name}}</h3>
+                <p>{{bowler_type}} ({{bowler_hand}})</p>
+                <p>{{bowler_description}}</p>
+            </div>
+        </div>
+    </header>
+
+    <nav class="variant-selector">
+        <button class="variant-btn active" data-variant="original">Original</button>
+        <button class="variant-btn" data-variant="skeleton">Skeleton</button>
+        <button class="variant-btn" data-variant="overlay">Overlay</button>
+    </nav>
+
+    <main>
+        <section class="view-section">
+            <h2>Back View</h2>
+            <div class="grid-4up" id="back-view-grid">
+                <!-- Panels will be inserted by JS -->
+            </div>
+        </section>
+
+        <section class="view-section">
+            <h2>Side View</h2>
+            <div class="grid-4up" id="side-view-grid">
+                <!-- Panels will be inserted by JS -->
+            </div>
+        </section>
+
+        <section class="metric-section">
+            <h2>Front Leg Brace Analysis</h2>
+            <div class="metric-grid" id="front-leg-brace-grid">
+                <!-- Panels will be inserted by JS -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+    // Manifest data will be injected here (placeholder replaced by build.py)
+        const MANIFEST = __MANIFEST_JSON__;
+        
+        let currentVariant = 'original';
+
+        // Initialize report
+        function initReport() {
+            renderPanels('back_view', 'back-view-grid');
+            renderPanels('side_view', 'side-view-grid');
+            renderPanels('front_leg_brace', 'front-leg-brace-grid');
+            
+            // Setup variant switcher
+            document.querySelectorAll('.variant-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    switchVariant(btn.dataset.variant);
+                });
+            });
+        }
+
+        function renderPanels(group, containerId) {
+            const container = document.getElementById(containerId);
+            const panels = MANIFEST.panels.filter(p => p.group === group);
+            
+            panels.forEach(panel => {
+                const panelDiv = document.createElement('div');
+                panelDiv.className = 'panel';
+                
+                if (!panel.exists) {
+                    panelDiv.innerHTML = `
+                        <div class="no-video">
+                            <p>No ${panel.view} view available</p>
+                        </div>
+                        <p class="panel-label">${panel.label}</p>
+                    `;
+                } else {
+                    const img = document.createElement('img');
+                    img.dataset.originalSrc = panel.variants.original;
+                    img.dataset.skeletonSrc = panel.variants.skeleton;
+                    img.dataset.overlaySrc = panel.variants.overlay;
+                    img.src = panel.variants[currentVariant];
+                    img.alt = panel.label;
+                    
+                    panelDiv.appendChild(img);
+                    
+                    const label = document.createElement('p');
+                    label.className = 'panel-label';
+                    label.textContent = panel.label;
+                    panelDiv.appendChild(label);
+                }
+                
+                container.appendChild(panelDiv);
+            });
+        }
+
+        function switchVariant(variant) {
+            currentVariant = variant;
+            
+            // Update button states
+            document.querySelectorAll('.variant-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.variant === variant);
+            });
+            
+            // Update all images
+            document.querySelectorAll('img[data-original-src]').forEach(img => {
+                const srcKey = variant + 'Src';
+                img.src = img.dataset[srcKey];
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initReport);
+    </script>
+</body>
+</html>

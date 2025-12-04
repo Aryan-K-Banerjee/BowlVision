@@ -1,0 +1,27 @@
+# Weights for scoring the bowling action
+# 
+# Two levels of weights:
+# 1. field_weights: weights for fields within each metric category
+# 2. metric_weights: weights for each metric in the overall bowling action score
+
+# Field weights within each metric category
+# If not specified, all fields are equally weighted (averaged)
+field_weights:
+  front_leg_brace:
+    front_knee_angle_at_ffc: 1.5      # Most important - initial brace
+    front_knee_angle_at_release: 1.5  # Most important - maintained brace
+    difference_ffc_release: 1.0       # Important - stability
+    max_flex_from_ffc: 0.5            # Less important - transient state
+    max_difference_ffc_flex: 1.0      # Important - overall stability
+
+# Metric weights for overall bowling action score
+# Set to 0 to exclude a metric from overall score calculation
+metric_weights:
+  front_leg_brace: 1.0  # Currently the only metric
+
+# Notes:
+# - Weights are relative, not absolute (they get normalized)
+# - To add a new metric without affecting existing scores, just add it with a weight
+# - Higher weight = more important to the overall score
+# - Weight of 0 = excluded from calculation
+# - If field weights not specified for a metric, all fields are equally weighted
