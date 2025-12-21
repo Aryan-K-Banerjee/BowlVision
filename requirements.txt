@@ -1,0 +1,10 @@
+# App Shell
+flask
+pywebview
+
+# Pipeline
+opencv-python
+mediapipe
+numpy
+pandas
+pyyaml
