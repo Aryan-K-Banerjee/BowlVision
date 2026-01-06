@@ -1,0 +1,101 @@
+/* Overall Navbar styling*/
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 60px;
+    padding: 0 24px;
+    
+    background-color: #181721;
+    border-bottom: 1px solid #282835;
+}
+
+/* The left side styling */
+.navbar_left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bowlvision_logo {
+    height: 50px;
+    width: 50px;
+}
+
+.navbar_title {
+    font-size: 25px;
+    font-weight: 600;
+    color: #EAEAF0;
+}
+
+/* The right side styling */
+.navbar_right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lfc_shoutout {
+    font-size: 14px;
+    font-weight: 400;
+    color: #B6BCCF;
+    white-space: nowrap;
+}
+
+.lfc_logo {
+    height: 40px;
+    width: 40px;
+}
+
+/* The progress bar */
+.progress_bar {
+    display: flex;
+    align-items: center;
+}
+
+/* Step styling */
+.step, 
+.active_step, 
+.completed_step {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: 30px;
+    font-size: 15px;
+    border-radius: 999px;
+}
+
+.step {
+    color: #B6BCCF;
+    padding: 4px 10px;
+    background: #2A2A34;
+}
+
+.active_step {
+    color: #181721;
+    padding: 4px 12px;
+    background: #84F0FA;
+    font-weight: 600;
+}
+
+.completed_step {
+    color: #84F0FA;
+    padding: 4px 10px;
+    background: #22343A;
+    font-weight: 500;
+}
+
+/* Bar styling */
+.bar {
+    width: 28px;
+    height: 10px;
+    background: #3A3A44;
+}
+
+.completed_bar {
+    width: 28px;
+    height: 10px;
+    background: #22343A;
+}

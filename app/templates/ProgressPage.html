@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Processing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/_NavBar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/ProgressPage.css') }}">
+</head>
+
+<body>
+    {% include '_NavBar.html' %}
+
+    <div class="progress_grid">
+        <!-- Terminal Panel (Main Feature) -->
+        <section class="card terminal_card">
+            <div class="terminal_header">
+                <div class="terminal_title">Pipeline Log</div>
+                <div class="terminal_status" id="terminal_status">
+                    <span class="status_dot running"></span>
+                    <span class="status_text">Running</span>
+                </div>
+            </div>
+
+            <div class="terminal_body" id="terminal_body">
+                <!-- Log lines will be inserted here -->
+            </div>
+        </section>
+
+        <!-- Action Bar (Bottom) -->
+        <section class="analyze_bar" id="action_bar">
+            <div class="analyze_hint" id="status_hint">
+                Pipeline running — do not close this tab.
+            </div>
+
+            <div class="analyze_actions" id="action_buttons">
+                <a href="{{ url_for('tagging_page') }}" class="btn btn_secondary" id="btn_cancel">Cancel</a>
+                <button type="button" id="btn_results" class="btn btn_primary" disabled>View Results</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Progress bar highlighting -->
+    <script>
+        const steps = document.querySelectorAll('.progress_bar .step');
+        const bars = document.querySelectorAll('.progress_bar .bar');
+
+        if (steps.length) {
+            steps[0].classList.add('completed_step');
+            steps[1].classList.add('completed_step');
+            steps[2].classList.add('active_step');
+        }
+
+        if (bars.length) {
+            bars[0].classList.add('completed_bar');
+            bars[1].classList.add('completed_bar');
+        }
+    </script>
+
+    <script src="{{ url_for('services', filename='progress.js') }}"></script>
+
+</body>
+
+</html>

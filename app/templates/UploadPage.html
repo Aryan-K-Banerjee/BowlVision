@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Upload</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/_NavBar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/UploadPage.css') }}">
+</head>
+
+<body>
+    {% include '_NavBar.html' %}
+
+    <form method="POST" enctype="multipart/form-data">
+
+        <div class="upload_grid">
+
+            <!-- Bowler -->
+            <section class="card bowler_card">
+                <h2>Bowler Information</h2>
+
+                <div class="bowler_top">
+                    <label class="avatar" title="Upload / change bowler image">
+                        <input type="file" name="bowler_image" accept="image/*" id="bowler_image">
+                        <img id="bowler_preview" alt="">
+                        <span class="avatar_hint">Upload</span>
+                    </label>
+
+                    <div class="bowler_fields">
+                        <label>Bowler Name
+                            <input type="text" name="bowler_name" value="{{ bowler_name|default('') }}">
+                        </label>
+
+                        <label>Bowling Hand
+                            <select name="bowler_hand">
+                                <option value="Right" {% if bowler_hand|default('Right') == 'Right' %}selected{% endif %}>Right</option>
+                                <option value="Left" {% if bowler_hand|default('Right') == 'Left' %}selected{% endif %}>Left</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+
+                <label class="grow">Bowler Description
+                    <textarea name="bowler_description">{{ bowler_description|default('') }}</textarea>
+                </label>
+            </section>
+
+            <!-- Session -->
+            <section class="card session_card">
+                <h2>Session Information</h2>
+
+                <div class="session_top">
+                    <label>Session Name
+                        <input type="text" name="session_name" value="{{ session_name|default('') }}">
+                    </label>
+
+                    <label>Session Date
+                        <input type="date" name="session_date" value="{{ session_date|default('') }}">
+                    </label>
+                </div>
+
+                <label class="grow">Session Description
+                    <textarea name="session_description">{{ session_description|default('') }}</textarea>
+                </label>
+            </section>
+
+            <!-- Videos -->
+            <section class="card video_upload_card">
+                <div class="video_split">
+                    <label class="video_zone">
+                        <input type="file" name="back_view" accept="video/mp4" id="back_view">
+                        <div class="zone_title">Back View</div>
+                        <div class="zone_desc">Behind the bowler, full body visible.</div>
+                        <div class="zone_file" id="back_view_file">Click anywhere to upload</div>
+                    </label>
+
+                    <label class="video_zone">
+                        <input type="file" name="side_view" accept="video/mp4" id="side_view">
+                        <div class="zone_title">Side View</div>
+                        <div class="zone_desc">Side-on, run-up and release visible.</div>
+                        <div class="zone_file" id="side_view_file">Click anywhere to upload</div>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Analyze bar -->
+            <section class="analyze_bar">
+                <div class="analyze_hint" id="action_hint">
+                    {% if error %}{{ error }}{% else %}Upload at least one video to analyze.{% endif %}
+                </div>
+
+                <div class="analyze_actions">
+                    <a href="{{ url_for('landing_page') }}" class="btn btn_secondary">Cancel</a>
+                    <button type="submit" id="analyze_button" class="btn btn_primary" disabled>Analyze</button>
+                </div>
+            </section>
+
+        </div>
+    </form>
+
+    <script>
+        // progress bar
+        const steps = document.querySelectorAll('.progress_bar .step');
+        if (steps.length) {
+            steps[0].classList.add('active_step');
+        }
+
+        // server-side error message (empty string if none)
+        const SERVER_ERROR = "{{ error|default('')|e }}";
+
+        // enable analyze button (needs >=1 video) + show file names
+        const backView = document.getElementById('back_view');
+        const sideView = document.getElementById('side_view');
+        const analyzeBtn = document.getElementById('analyze_button');
+        const actionHint = document.getElementById('action_hint');
+
+        const backFile = document.getElementById('back_view_file');
+        const sideFile = document.getElementById('side_view_file');
+
+        function updateVideoState() {
+            const backOk = backView.files.length > 0;
+            const sideOk = sideView.files.length > 0;
+            
+            backView.closest('.video_zone').classList.toggle('uploaded', backOk);
+            sideView.closest('.video_zone').classList.toggle('uploaded', sideOk);
+
+            analyzeBtn.disabled = !(backOk || sideOk);
+
+            // If server returned an error, don't overwrite it until user selects a video
+            if (SERVER_ERROR && !(backOk || sideOk)) {
+                backFile.textContent = "Click anywhere to upload";
+                sideFile.textContent = "Click anywhere to upload";
+                return;
+            }
+
+            actionHint.textContent = (backOk || sideOk)
+                ? "Looks good. You can analyze now."
+                : "Upload at least one video to analyze.";
+
+            backFile.textContent = backOk ? backView.files[0].name : "Click anywhere to upload";
+            sideFile.textContent = sideOk ? sideView.files[0].name : "Click anywhere to upload";
+        }
+
+        backView.addEventListener('change', updateVideoState);
+        sideView.addEventListener('change', updateVideoState);
+
+        // bowler image preview
+        const imgInput = document.getElementById('bowler_image');
+        const imgPreview = document.getElementById('bowler_preview');
+
+        imgInput.addEventListener('change', () => {
+            if (!imgInput.files.length) return;
+            imgPreview.src = URL.createObjectURL(imgInput.files[0]);
+            imgPreview.style.opacity = 1;
+        });
+
+        updateVideoState();
+    </script>
+
+</body>
+</html>

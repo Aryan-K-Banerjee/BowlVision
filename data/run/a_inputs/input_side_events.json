@@ -1,0 +1,9 @@
+{
+  "view": "side",
+  "events": {
+    "Jump": 108,
+    "BFC": 114,
+    "FFC": 123,
+    "Release": 126
+  }
+}

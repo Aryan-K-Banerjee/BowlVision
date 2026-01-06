@@ -1,0 +1,398 @@
+/* ============== Base ============== */
+:root{
+  --bg: #12121A;
+  --card: #1A1A24;
+  --card2: #141420;
+  --border: #2A2A34;
+  --text: #EAEAF0;
+  --muted: #B6BCCF;
+  --muted2: #9AA0B5;
+  --accent: #84F0FA;
+  --shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+/* CRITICAL: prevents padding/borders from breaking grid sizing */
+*,
+*::before,
+*::after{
+  box-sizing: border-box;
+}
+
+body{
+  margin:0;
+  background: radial-gradient(1200px 600px at 50% -200px, rgba(132,240,250,0.10), transparent 60%),
+              var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow:hidden; /* no scrolling */
+}
+
+form{ margin:0; }
+
+/* ============== Page Grid (2 cols, 3 rows) ============== */
+.upload_grid{
+  height: calc(100vh - 60px ); /* navbar + cushion */
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 20px;
+
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 4.6fr 3.4fr 1fr; /* more space top, less to upload */
+  gap: 12px;
+
+  min-height:0;
+}
+
+/* ============== Card Base ============== */
+.card{
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 12px;
+
+  min-height:0;
+  display:grid;
+  gap: 10px;
+}
+
+/* Title */
+.card > h2{
+  margin:0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+}
+
+/* Labels / Inputs */
+label{
+  color: var(--muted);
+  font-size: 12px;
+  display:grid;
+  gap: 5px;
+}
+
+input, select, textarea{
+  width: 100%;
+  background: rgba(18,18,26,0.85);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+}
+
+input:focus, select:focus, textarea:focus{
+  border-color: rgba(132,240,250,0.9);
+  box-shadow: 0 0 0 3px rgba(132,240,250,0.10);
+}
+
+/* CRITICAL: textarea must shrink in grids and scroll internally */
+textarea{
+  resize: none;
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+}
+
+/* Description labels: label row + textarea row (and cannot spill out) */
+.grow{
+  min-height:0;
+  overflow: hidden;
+
+  display:grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+/* ============== Bowler Card layout ============== */
+.bowler_card{
+  grid-column: 1;
+  grid-row: 1;
+
+  display: grid;
+  min-height: 0;
+
+  /* title + top half + bottom half */
+  grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* top half: image left, fields right */
+.bowler_top{
+  min-height:0;
+  display:grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+/* circular uploader */
+.avatar{
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: 999px;
+
+  border: 1px dashed rgba(132,240,250,0.45);
+  background: radial-gradient(180px 180px at 30% 20%, rgba(132,240,250,0.12), transparent 60%),
+              var(--card2);
+
+  overflow:hidden;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+}
+
+.avatar input{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius: 999px;
+  opacity:0;
+  transition: opacity 0.15s ease;
+}
+
+.avatar_hint{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color: var(--accent);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  font-size: 12px;
+  background: linear-gradient(180deg, rgba(18,18,26,0.10), rgba(18,18,26,0.70));
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.avatar:hover .avatar_hint{
+  opacity: 1;
+}
+
+/* fields stack to match avatar height */
+.bowler_fields{
+  min-height:0;
+  display:grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ============== Session Card layout ============== */
+.session_card{
+  grid-column: 2;
+  grid-row: 1;
+
+  display: grid;
+  min-height: 0;
+
+  /* title + top half + bottom half */
+  grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.session_top{
+  min-height:0;
+  display:grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ============== Video Upload Card (simplified, no title) ============== */
+.video_upload_card{
+  grid-column: 1 / span 2;
+  grid-row: 2;
+
+  padding: 12px;
+  display:grid;
+  grid-template-rows: 1fr; /* no header row */
+  min-height: 0;
+}
+
+/* If an h2 is still present, hide it safely */
+.video_upload_card > h2{
+  display:none;
+}
+
+.video_split{
+  min-height:0;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* clickable zones */
+.video_zone{
+  position: relative;
+  min-height:0;
+
+  border-radius: 14px;
+  border: 1px dashed rgba(132,240,250,0.28);
+  background: radial-gradient(450px 240px at 20% 10%, rgba(132,240,250,0.10), transparent 60%),
+              var(--card2);
+
+  padding: 14px;
+  cursor: pointer;
+
+  display:grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 8px;
+
+  transition: transform 0.12s ease, border-color 0.12s ease, background-color 0.12s ease;
+}
+
+.video_zone:hover{
+  border-color: rgba(132,240,250,0.75);
+  transform: translateY(-1px);
+}
+
+.video_zone input{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer;
+}
+
+.zone_title{
+  font-size: 15px;
+  font-weight: 750;
+  color: var(--text);
+}
+
+.zone_desc{
+  font-size: 12px;
+  color: var(--muted2);
+  line-height: 1.35;
+}
+
+.zone_file{
+  align-self: end;
+  padding-top: 10px;
+  border-top: 1px solid rgba(42,42,52,0.9);
+  font-size: 12px;
+  color: var(--accent);
+  word-break: break-word;
+}
+
+/* ============== Video Zone: uploaded state ============== */
+.video_zone.uploaded{
+  border-style: solid;
+  border-color: rgba(132,240,250,0.95);
+  background: radial-gradient(450px 240px at 20% 10%, rgba(132,240,250,0.18), transparent 60%),
+              rgba(132,240,250,0.06);
+}
+
+.video_zone.uploaded .zone_file{
+  border-top-color: rgba(132,240,250,0.35);
+}
+
+/* Slightly stronger hover if uploaded */
+.video_zone.uploaded:hover{
+  transform: translateY(-2px);
+  border-color: rgba(132,240,250,1);
+}
+
+
+/* ============== Analyze button: hover + click ============== */
+.btn_primary{
+  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  box-shadow: 0 10px 24px rgba(132,240,250,0.14);
+}
+
+.btn_primary:hover:not(:disabled){
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+  box-shadow: 0 14px 32px rgba(132,240,250,0.22);
+}
+
+.btn_primary:active:not(:disabled){
+  transform: translateY(0px);
+  filter: brightness(0.98);
+  box-shadow: 0 10px 22px rgba(132,240,250,0.16);
+}
+
+.btn_primary:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(132,240,250,0.18), 0 14px 32px rgba(132,240,250,0.22);
+}
+
+.btn_primary:disabled{
+  box-shadow: none;
+}
+
+
+/* ============== Analyze Bar ============== */
+.analyze_bar{
+  grid-column: 1 / span 2;
+  grid-row: 3;
+
+  background: linear-gradient(90deg, rgba(132,240,250,0.12), rgba(255,255,255,0.02));
+  border: 1px solid rgba(132,240,250,0.25);
+  border-radius: 14px;
+
+  padding: 0 14px;
+  box-shadow: var(--shadow);
+
+  display:grid;
+  grid-template-columns: 1fr auto;
+  align-items:center;
+  gap: 14px;
+
+  min-height:0;
+}
+
+.analyze_hint{
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.analyze_actions{
+  display:grid;
+  grid-auto-flow: column;
+  gap: 10px;
+  align-items:center;
+}
+
+/* ============== Buttons ============== */
+.btn{
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration:none;
+
+  display:grid;
+  place-items:center;
+  border: 1px solid transparent;
+  user-select:none;
+}
+
+.btn_secondary{
+  color: var(--text);
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(42,42,52,1);
+}
+
+.btn_secondary:hover{
+  border-color: rgba(132,240,250,0.7);
+}
+
+.btn_primary{
+  background: var(--accent);
+  color: #181721;
+}
+
+.btn_primary:disabled{
+  background: rgba(42,42,52,1);
+  color: #777C90;
+  cursor:not-allowed;
+}

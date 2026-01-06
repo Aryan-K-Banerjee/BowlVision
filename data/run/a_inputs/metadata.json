@@ -1,0 +1,26 @@
+{
+  "createdAt": "2026-01-06T14:58:01.348855Z",
+  "bowler": {
+    "name": "Aryan Banerjee",
+    "hand": "Right",
+    "description": "Tall right-arm quick who attacks the stumps and works in-swing with a firm front leg brace.",
+    "imagePath": "data/run/a_inputs/bowler_image.jpg"
+  },
+  "session": {
+    "name": "Practice at the Black Field",
+    "date": "2026-01-06",
+    "description": "Tall right-arm quick who attacks the stumps and works in-swing with a firm front leg brace."
+  },
+  "inputs": {
+    "backView": {
+      "provided": true,
+      "path": "data/run/a_inputs/input_back_view.mp4",
+      "originalFilename": "input_back_view.mp4"
+    },
+    "sideView": {
+      "provided": true,
+      "path": "data/run/a_inputs/input_side_view.mp4",
+      "originalFilename": "input_side_view.mp4"
+    }
+  }
+}

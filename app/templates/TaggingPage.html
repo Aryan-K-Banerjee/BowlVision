@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Tagging</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/_NavBar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/TaggingPage.css') }}">
+</head>
+
+<body>
+    {% include '_NavBar.html' %}
+
+    <!-- Loading Overlay -->
+    <div class="loading_overlay" id="loading_overlay">
+        <div class="loading_spinner">
+            <div class="loading_text">Loading frames...</div>
+        </div>
+    </div>
+
+    <div class="tagging_grid">
+        <!-- Compact Tagging Bar (Top) - Both views on same line -->
+        <div class="tagging_bar">
+            <div class="view_row" data-view="back" id="view_row_back">
+                <label>Back</label>
+                <div class="event" data-event="Jump">Jump</div>
+                <div class="event" data-event="BFC">BFC</div>
+                <div class="event" data-event="FFC">FFC</div>
+                <div class="event" data-event="Release">Release</div>
+            </div>
+
+            <div class="bar_divider"></div>
+
+            <div class="view_row" data-view="side" id="view_row_side">
+                <label>Side</label>
+                <div class="event" data-event="Jump">Jump</div>
+                <div class="event" data-event="BFC">BFC</div>
+                <div class="event" data-event="FFC">FFC</div>
+                <div class="event" data-event="Release">Release</div>
+            </div>
+        </div>
+
+        <!-- Canvas Player (Center) -->
+        <div class="canvas_player">
+            <div class="canvas_container" id="canvas_container">
+                <canvas id="frame_canvas"></canvas>
+            </div>
+
+            <div class="player_info">
+                <div class="view_label" id="current_view_label">Back View</div>
+
+                <div class="player_controls">
+                    <button class="control_btn" id="btn_step_back" title="Step Back (←)">⏮</button>
+                    <button class="control_btn" id="btn_play_pause" title="Play/Pause (Space)">▶</button>
+                    <button class="control_btn" id="btn_step_forward" title="Step Forward (→)">⏭</button>
+
+                    <div class="scrubber_container">
+                        <input type="range" class="scrubber" id="frame_scrubber" min="0" max="100" value="0">
+                    </div>
+
+                    <!-- Zoom Controls -->
+                    <button class="control_btn" id="btn_zoom_out" title="Zoom Out (-)">−</button>
+                    <button class="control_btn" id="btn_zoom_reset" title="Reset Zoom">⟲</button>
+                    <button class="control_btn" id="btn_zoom_in" title="Zoom In (+)">+</button>
+                </div>
+
+                <div class="frame_counter">
+                    Frame <span id="current_frame">0</span> / <span id="total_frames">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Bar (Bottom) -->
+        <div class="analyze_bar">
+            <div class="tagging_hint" id="tag_hint">
+                Press <strong>Enter</strong> to tag <strong id="current_event_name">Jump</strong>
+            </div>
+
+            <div class="analyze_actions">
+                <div class="complete_message" id="complete_message">All events tagged! Ready to analyze.</div>
+                <a href="{{ url_for('landing_page') }}" class="btn btn_secondary">Cancel</a>
+                <button type="button" id="analyze_button" class="btn btn_primary" disabled>Analyze</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Keyboard Hints -->
+    <div class="keyboard_hints">
+        <div><span class="key">Space</span> Play / Pause</div>
+        <div><span class="key">←</span> Step back</div>
+        <div><span class="key">→</span> Step forward</div>
+        <div><span class="key">Enter</span> Tag event</div>
+    </div>
+
+    <script>
+        // Progress bar highlighting
+        const steps = document.querySelectorAll('.progress_bar .step');
+        const bars = document.querySelectorAll('.progress_bar .bar');
+
+        if (steps.length) {
+            steps[0].classList.add('completed_step');
+            steps[1].classList.add('active_step');
+        }
+
+        if (bars.length) {
+            bars[0].classList.add('completed_bar');
+        }
+
+        // Pass tagging state from Flask to JavaScript
+        window.TAGGING_STATE = {{ tagging_state | tojson | safe }};
+    </script>
+
+    <script src="{{ url_for('services', filename='tagging.js') }}"></script>
+
+</body>
+
+</html>
