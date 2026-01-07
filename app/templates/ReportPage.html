@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/_NavBar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/ReportPage.css') }}">
+</head>
+
+<body>
+    {% include '_NavBar.html' %}
+
+    {% if error %}
+    <!-- Error State -->
+    <main class="report_container">
+        <section class="card error_card">
+            <h2>⚠️ Report Not Available</h2>
+            <p>{{ error }}</p>
+            <p style="margin-top: 16px;">
+                <a href="{{ url_for('upload_page') }}" class="btn btn_primary">Upload New Session</a>
+            </p>
+        </section>
+    </main>
+
+    {% else %}
+    <!-- Main Content -->
+    <main class="report_container">
+        <!-- Header Card -->
+        <section class="card">
+            <div class="card_header">
+                <h2 class="card_title">{{ header.title }}</h2>
+                <span class="card_subtitle">{{ formatted_date }}</span>
+            </div>
+            <div class="card_body">
+                <div class="header_grid">
+                    <div class="bowler_block">
+                        {% if bowler.image_path %}
+                        <img src="/report-asset/{{ bowler.image_path }}" alt="Bowler" class="bowler_image" onerror="this.style.display='none'">
+                        {% endif %}
+                        <div class="bowler_info">
+                            <h3>{{ bowler.name }}<span class="hand_badge">{{ bowler.hand }}-handed</span></h3>
+                            <p>{{ bowler.description }}</p>
+                        </div>
+                    </div>
+                    <div class="session_block">
+                        <div class="session_info">
+                            <h3>📍 {{ session.name }}</h3>
+                            <p>{{ session.description }}</p>
+                            <p class="session_date">{{ session.date }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary Card (Score + Thumbnails) -->
+        <section class="card">
+            <div class="card_header">
+                <h2 class="card_title">Summary</h2>
+            </div>
+            <div class="card_body">
+                <div class="summary_grid">
+                    <!-- Score Dial -->
+                    <div class="score_dial_container">
+                        <div class="score_dial_title">Biomechanical Rating</div>
+                        {{ score_dial_html | safe }}
+                    </div>
+                    
+                    <!-- Thumbnails Grid (2 rows x 4 cols) -->
+                    {{ thumbnails_html | safe }}
+                </div>
+            </div>
+        </section>
+
+        <!-- Classifications Card -->
+        <section class="card">
+            <div class="card_header">
+                <h2 class="card_title">Classifications</h2>
+                <span class="card_subtitle">{{ classifications | length }} identified</span>
+            </div>
+            <div class="card_body">
+                <div class="items_grid">
+                    {{ classification_cards_html | safe }}
+                </div>
+            </div>
+        </section>
+
+        <!-- Metrics Card -->
+        <section class="card">
+            <div class="card_header">
+                <h2 class="card_title">Metrics</h2>
+                <span class="card_subtitle">{{ metrics | length }} measured</span>
+            </div>
+            <div class="card_body">
+                <div class="items_grid">
+                    {{ metric_cards_html | safe }}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bottom Bar -->
+    <div class="bottom_bar">
+        <div class="bottom_bar_inner">
+            <div class="bottom_bar_left">
+                <div class="type_toggle">
+                    <button class="type_btn" data-type="original">Original</button>
+                    <button class="type_btn active" data-type="skeleton">Skeleton</button>
+                    <button class="type_btn" data-type="overlay">Overlay</button>
+                </div>
+            </div>
+            <div class="bottom_bar_actions">
+                <a href="{{ url_for('upload_page') }}" class="btn btn_secondary">New Session</a>
+                <button id="btn_coach" class="btn btn_primary" {{ 'disabled' if not coach_available else '' }}>
+                    🎯 Chat with BowlVision Coach
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coach Drawer -->
+    <div class="coach_drawer_backdrop" id="coach_drawer_backdrop">
+        <aside class="coach_drawer">
+            <!-- Header -->
+            <div class="coach_header">
+                <div class="coach_header_left">
+                    <h3 class="coach_title">
+                        <span class="coach_title_icon">🎯</span>
+                        BowlVision Coach
+                    </h3>
+                    <span class="coach_subtitle">AI-powered coaching grounded in your report</span>
+                </div>
+                <div class="grounding_badge">Grounded in this report</div>
+                <button class="coach_close" id="coach_close">×</button>
+            </div>
+
+            <!-- Chat Body -->
+            <div class="coach_body" id="coach_body">
+                <!-- Messages will be inserted here -->
+            </div>
+
+            <!-- Quick Prompts -->
+            <div class="quick_prompts">
+                {% for prompt in quick_prompts %}
+                <button class="quick_prompt">{{ prompt }}</button>
+                {% endfor %}
+            </div>
+
+            <!-- Input Footer -->
+            <div class="coach_footer">
+                <div class="coach_input_wrapper">
+                    <input type="text" 
+                           class="coach_input" 
+                           id="coach_input" 
+                           placeholder="Ask about your technique..."
+                           autocomplete="off">
+                    <button class="coach_send" id="coach_send">➤</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Lightbox for images -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox_close" id="lightbox_close">×</button>
+        <img src="" alt="Preview" id="lightbox_img">
+    </div>
+
+    <!-- Modal for Classifications/Metrics -->
+    <div class="modal_backdrop" id="modal_backdrop">
+        <div class="modal" id="modal">
+            <div class="modal_header">
+                <div class="modal_title_group">
+                    <span class="item_chip" id="modal_chip"></span>
+                    <h3 class="modal_title" id="modal_title"></h3>
+                </div>
+                <button class="modal_close" id="modal_close">×</button>
+            </div>
+            <div class="modal_body" id="modal_body">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <!-- Progress bar highlighting -->
+    <script>
+        const steps = document.querySelectorAll('.progress_bar .step');
+        const bars = document.querySelectorAll('.progress_bar .bar');
+
+        // Mark all steps as completed, Results as active
+        if (steps.length >= 3) {
+            steps[0].classList.add('completed_step');
+            steps[1].classList.add('completed_step');
+            steps[2].classList.add('completed_step');
+        }
+
+        if (bars.length >= 2) {
+            bars[0].classList.add('completed_bar');
+            bars[1].classList.add('completed_bar');
+            bars[2].classList.add('completed_bar');
+        }
+    </script>
+
+    <!-- Type toggle functionality -->
+    <script>
+        (function() {
+            const typeButtons = document.querySelectorAll('.type_btn');
+            const switchableImages = document.querySelectorAll('.switchable-image');
+            window.currentType = 'skeleton';
+
+            typeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const type = btn.dataset.type;
+                    if (type === window.currentType) return;
+
+                    window.currentType = type;
+                    
+                    // Update buttons
+                    typeButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Update images
+                    switchableImages.forEach(img => {
+                        const base = img.dataset.base;
+                        if (base) {
+                            img.src = `${base}_${type}.png`;
+                        }
+                    });
+                });
+            });
+
+            // Lightbox
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox_img');
+            const lightboxClose = document.getElementById('lightbox_close');
+            const thumbnails = document.querySelectorAll('.thumbnail');
+
+            // Helper function to open lightbox from anywhere (including modal screenshots)
+            window.openLightboxFromModal = function(src) {
+                if (lightbox && lightboxImg) {
+                    lightboxImg.src = src;
+                    lightbox.classList.add('open');
+                }
+            };
+
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    const img = thumb.querySelector('img');
+                    if (img && lightbox) {
+                        lightboxImg.src = img.src;
+                        lightbox.classList.add('open');
+                    }
+                });
+            });
+
+            if (lightboxClose) {
+                lightboxClose.addEventListener('click', () => {
+                    lightbox.classList.remove('open');
+                });
+            }
+
+            if (lightbox) {
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) {
+                        lightbox.classList.remove('open');
+                    }
+                });
+            }
+
+            // Modal for classifications and metrics
+            const modalBackdrop = document.getElementById('modal_backdrop');
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal_title');
+            const modalChip = document.getElementById('modal_chip');
+            const modalBody = document.getElementById('modal_body');
+            const modalClose = document.getElementById('modal_close');
+            const itemCards = document.querySelectorAll('.item_card');
+
+            // Data from server
+            const classificationsData = {{ classifications | tojson | safe }};
+            const metricsData = {{ metrics | tojson | safe }};
+
+            itemCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const type = card.dataset.type;
+                    const index = parseInt(card.dataset.index);
+                    
+                    let item;
+                    if (type === 'classification') {
+                        item = classificationsData[index];
+                    } else if (type === 'metric') {
+                        item = metricsData[index];
+                    }
+                    
+                    if (!item) return;
+                    
+                    // Set title and chip
+                    modalTitle.textContent = item.name || 'Unknown';
+                    const rating = (item.rating || 'N/A').replace(/_/g, ' ');
+                    modalChip.textContent = rating;
+                    modalChip.className = 'item_chip ' + (type === 'classification' ? 'chip_classification' : 'rating ' + (item.rating || '').toLowerCase().replace(/ /g, '_'));
+                    
+                    // Build body content
+                    let bodyHtml = '';
+                    
+                    // Description section
+                    if (item.description) {
+                        bodyHtml += `<div class="modal_section">
+                            <h5>Description</h5>
+                            <p>${item.description}</p>
+                        </div>`;
+                    }
+                    
+                    // Analysis section
+                    if (item.analysis) {
+                        bodyHtml += `<div class="modal_section">
+                            <h5>Analysis</h5>
+                            <p>${item.analysis}</p>
+                        </div>`;
+                    }
+                    
+                    // Details grid
+                    let details = [];
+                    if (item.value !== null && item.value !== undefined) {
+                        details.push({ label: 'Value', value: typeof item.value === 'number' ? item.value.toFixed(1) + (item.unit ? ' ' + item.unit : '') : item.value });
+                    }
+                    if (item.score !== null && item.score !== undefined) {
+                        details.push({ label: 'Score', value: item.score.toFixed(1) + ' / 100' });
+                    }
+                    if (item.rating) {
+                        details.push({ label: 'Rating', value: item.rating.replace(/_/g, ' ') });
+                    }
+                    
+                    // Extra data
+                    if (item.extra_data) {
+                        for (const [key, val] of Object.entries(item.extra_data)) {
+                            if (val !== null && val !== undefined && key !== 'score') {
+                                const label = key.replace(/_/g, ' ');
+                                const displayVal = typeof val === 'number' ? val.toFixed(1) : val;
+                                details.push({ label: label, value: displayVal });
+                            }
+                        }
+                    }
+                    
+                    if (details.length > 0) {
+                        bodyHtml += `<div class="modal_section">
+                            <h5>Details</h5>
+                            <div class="details_grid">
+                                ${details.map(d => `<div class="detail_item"><div class="label">${d.label}</div><div class="value">${d.value}</div></div>`).join('')}
+                            </div>
+                        </div>`;
+                    }
+
+                    // Screenshots section
+                    if (item.screenshots && item.screenshots.length > 0) {
+                        bodyHtml += `<div class="modal_section">
+                            <h5>Screenshots</h5>
+                            <div class="modal_screenshots">`;
+                        
+                        console.log('Screenshots:', item.screenshots);
+                        console.log('Current type:', window.currentType);
+                        
+                        item.screenshots.forEach(ss => {
+                            const imgSrc = `/report-asset/screenshots/${ss.output_name}_${window.currentType}.png`;
+                            console.log('Image URL:', imgSrc);
+                            bodyHtml += `<div class="modal_screenshot">
+                                <img src="${imgSrc}" alt="${ss.output_name}" onclick="openLightboxFromModal('${imgSrc}')" onerror="console.error('Failed to load:', this.src)">
+                                <div class="screenshot_label">${ss.view} view</div>
+                            </div>`;
+                        });
+                        
+                        bodyHtml += `</div></div>`;
+                    }
+                    
+                    modalBody.innerHTML = bodyHtml;
+                    modalBackdrop.classList.add('open');
+                });
+            });
+
+            if (modalClose) {
+                modalClose.addEventListener('click', () => {
+                    modalBackdrop.classList.remove('open');
+                });
+            }
+
+            if (modalBackdrop) {
+                modalBackdrop.addEventListener('click', (e) => {
+                    if (e.target === modalBackdrop) {
+                        modalBackdrop.classList.remove('open');
+                    }
+                });
+            }
+
+            // Escape key to close modals
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (lightbox) lightbox.classList.remove('open');
+                    if (modalBackdrop) modalBackdrop.classList.remove('open');
+                }
+            });
+        })();
+    </script>
+
+    <!-- Coach script -->
+    <script src="{{ url_for('static', filename='scripts/coach.js') }}"></script>
+</body>
+
+</html>

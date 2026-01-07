@@ -35,7 +35,7 @@
 
             <div class="analyze_actions" id="action_buttons">
                 <a href="{{ url_for('tagging_page') }}" class="btn btn_secondary" id="btn_cancel">Cancel</a>
-                <button type="button" id="btn_results" class="btn btn_primary" disabled>View Results</button>
+                <a href="{{ url_for('report_page') }}" id="btn_results" class="btn btn_primary" style="pointer-events: none; opacity: 0.5;">View Results</a>
             </div>
         </section>
     </div>

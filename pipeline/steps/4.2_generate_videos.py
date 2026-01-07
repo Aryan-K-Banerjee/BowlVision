@@ -1,10 +1,10 @@
 """
 Step 4.2: Generate Videos
 
-This step generates visualization videos from the processed clips and keypoints:
-- Green Skeleton: Skeleton rendered on black background
-
-For now, only implementing green skeleton videos to validate Steps 1 and 2.
+This step generates 3 visualization videos from the processed clips and keypoints:
+1. Original: Original video with green skeleton overlay
+2. Skeleton: Green skeleton on black background
+3. Overlay: Original video with green skeleton and angle overlays
 
 Videos are saved to data/run/results/videos/
 """
@@ -60,22 +60,32 @@ def generate_videos(session_dir: str, log: Optional[Callable[[str, int, str], No
             log(f"- {view_name.capitalize()} view files not found, skipping", 1, 'info')
             continue
         
-        log(f"- Generating green skeleton video for {view_name} view...", 1, 'info')
+        log(f"- Generating videos for {view_name} view...", 1, 'info')
         
-        # Generate green skeleton video
-        output_path = videos_dir / f'{view_name}_view_skeleton.mp4'
-        success = _generate_skeleton_video(
-            str(video_path),
-            str(keypoints_path),
-            str(output_path),
-            log
-        )
+        # Generate all 3 video types
+        video_types = [
+            ('original', 'Original with skeleton overlay'),
+            ('skeleton', 'Skeleton on black background'),
+            ('overlay', 'Original with skeleton and angles')
+        ]
         
-        if success:
-            result['generated_videos'].append(str(output_path))
-            log(f"  ✓ {view_name.capitalize()} skeleton video generated", 2, 'success')
-        else:
-            log(f"  ✖ Failed to generate skeleton video for {view_name} view", 2, 'error')
+        for video_type, description in video_types:
+            output_path = videos_dir / f'{view_name}_view_{video_type}.mp4'
+            log(f"  Generating {description}...", 2, 'info')
+            
+            success = _generate_video(
+                str(video_path),
+                str(keypoints_path),
+                str(output_path),
+                video_type,
+                log
+            )
+            
+            if success:
+                result['generated_videos'].append(str(output_path))
+                log(f"    ✓ {view_name.capitalize()} {video_type} video generated", 3, 'success')
+            else:
+                log(f"    ✖ Failed to generate {video_type} video for {view_name} view", 3, 'error')
     
     result['success'] = len(result['generated_videos']) > 0
     
@@ -88,37 +98,45 @@ def generate_videos(session_dir: str, log: Optional[Callable[[str, int, str], No
     return result
 
 
-def _generate_skeleton_video(
+def _generate_video(
     video_path: str,
     keypoints_path: str,
     output_path: str,
+    video_type: str,
     log: Callable
 ) -> bool:
-    """Generate a green skeleton video on black background."""
+    """Generate a visualization video of the specified type.
+    
+    Args:
+        video_path: Path to input video
+        keypoints_path: Path to keypoints CSV
+        output_path: Path to output video
+        video_type: 'original', 'skeleton', or 'overlay'
+        log: Logging callback
+    """
     cap = None
     writer = None
     try:
         # Open video to get dimensions
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
-            log("    Could not open video", 3, 'error')
+            log("      Could not open video", 4, 'error')
             return False
         
         fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
         width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        cap.release()
         
-        log(f"    Video dimensions: {width}x{height}, {total_frames} frames at {fps:.1f} fps", 3, 'info')
+        log(f"      Video dimensions: {width}x{height}, {total_frames} frames at {fps:.1f} fps", 4, 'info')
         
         # Load keypoints from CSV
         keypoints_data = _load_keypoints_from_csv(keypoints_path)
         if not keypoints_data:
-            log("    Failed to load keypoints", 3, 'error')
+            log("      Failed to load keypoints", 4, 'error')
             return False
         
-        log(f"    Loaded {len(keypoints_data)} frames of keypoints", 3, 'info')
+        log(f"      Loaded {len(keypoints_data)} frames of keypoints", 4, 'info')
         
         # Get MediaPipe connections
         connections = _get_pose_connections()
@@ -127,13 +145,24 @@ def _generate_skeleton_video(
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         writer = cv2.VideoWriter(output_path, fourcc, float(fps), (width, height))
         if not writer.isOpened():
-            log("    Could not create output writer", 3, 'error')
+            log("      Could not create output writer", 4, 'error')
             return False
         
+        # Reset video to start
+        cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        
         # Generate frames
-        for frame_idx in range(len(keypoints_data)):
-            # Create black canvas
-            canvas = np.zeros((height, width, 3), dtype=np.uint8)
+        frame_idx = 0
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            
+            if frame_idx >= len(keypoints_data):
+                # If we run out of keypoints, just use the last frame
+                writer.write(frame if video_type != 'skeleton' else np.zeros_like(frame))
+                frame_idx += 1
+                continue
             
             # Get landmarks for this frame
             landmarks = keypoints_data[frame_idx]
@@ -147,19 +176,40 @@ def _generate_skeleton_video(
                     y_pixel = int(y_norm * height)
                     pixel_landmarks.append((x_pixel, y_pixel, z, vis))
             
-            # Draw skeleton
-            _draw_skeleton(canvas, pixel_landmarks, connections, color=(0, 255, 0), thickness=2)
+            # Generate frame based on type
+            if video_type == 'skeleton':
+                # Skeleton on black background
+                canvas = np.zeros((height, width, 3), dtype=np.uint8)
+                _draw_skeleton(canvas, pixel_landmarks, connections, color=(0, 255, 0), thickness=2)
+                output_frame = canvas
             
-            writer.write(canvas)
+            elif video_type == 'original':
+                # Original video with skeleton overlay
+                canvas = frame.copy()
+                _draw_skeleton(canvas, pixel_landmarks, connections, color=(0, 255, 0), thickness=2)
+                output_frame = canvas
             
-            if (frame_idx + 1) % 50 == 0:
-                log(f"    Generated {frame_idx + 1}/{len(keypoints_data)} frames...", 3, 'info')
+            elif video_type == 'overlay':
+                # Original with skeleton (for now, same as original - angles can be added later)
+                canvas = frame.copy()
+                _draw_skeleton(canvas, pixel_landmarks, connections, color=(0, 255, 0), thickness=2)
+                # TODO: Add angle overlays based on event frames
+                output_frame = canvas
+            
+            else:
+                output_frame = frame
+            
+            writer.write(output_frame)
+            frame_idx += 1
+            
+            if frame_idx % 50 == 0:
+                log(f"      Generated {frame_idx}/{len(keypoints_data)} frames...", 4, 'info')
         
-        log(f"    Generated {len(keypoints_data)} frames", 3, 'success')
+        log(f"      Generated {frame_idx} frames", 4, 'success')
         return True
         
     except Exception as e:
-        log(f"    Exception: {e}", 3, 'error')
+        log(f"      Exception: {e}", 4, 'error')
         return False
         
     finally:

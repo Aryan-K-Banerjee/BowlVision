@@ -178,7 +178,9 @@
                 statusText.textContent = 'Running';
                 statusHint.textContent = 'Pipeline running — do not close this tab.';
                 actionBar.classList.remove('success_state', 'error_state');
-                btnResults.disabled = true;
+                // Disable the results link
+                btnResults.style.pointerEvents = 'none';
+                btnResults.style.opacity = '0.5';
                 break;
 
             case 'success':
@@ -186,7 +188,9 @@
                 statusHint.textContent = 'Pipeline complete.';
                 actionBar.classList.remove('error_state');
                 actionBar.classList.add('success_state');
-                btnResults.disabled = false;
+                // Enable the results link
+                btnResults.style.pointerEvents = 'auto';
+                btnResults.style.opacity = '1';
                 btnCancel.textContent = 'Cancel';
                 break;
 
@@ -195,7 +199,9 @@
                 statusHint.textContent = 'Pipeline failed — see log.';
                 actionBar.classList.remove('success_state');
                 actionBar.classList.add('error_state');
-                btnResults.disabled = true;
+                // Disable the results link
+                btnResults.style.pointerEvents = 'none';
+                btnResults.style.opacity = '0.5';
                 btnCancel.textContent = 'Back to Tagging';
                 btnCancel.classList.add('btn_warning');
                 break;

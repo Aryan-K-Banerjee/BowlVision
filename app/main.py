@@ -1,8 +1,23 @@
 from flask import Flask, render_template, redirect, url_for, request, jsonify, send_file, send_from_directory, Response
+from dotenv import load_dotenv
 from services.upload import setup_dir, save_metadata_and_videos
 from services.tagging import get_tagging_state, get_frame_path, save_events, is_tagging_complete, get_available_views
 from services.progress import start_pipeline, get_pipeline_state, stream_logs
+from services.report import (
+    load_report_data, format_date, generate_score_dial_html,
+    generate_thumbnails_html, generate_classification_cards_html,
+    generate_metric_cards_html, get_quick_prompts
+)
+from services.coach import get_coach_service, reset_coach_service
 from pathlib import Path
+import logging
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -89,6 +104,81 @@ def progress_page():
     return render_template('ProgressPage.html')
 
 
+@app.route('/report')
+def report_page():
+    """Render the report page with coach chat."""
+    # Reset coach service to reload data
+    reset_coach_service()
+    
+    # Load report data
+    report_data, error = load_report_data()
+    
+    if error or report_data is None:
+        return render_template('ReportPage.html', 
+                             title='Report Not Available',
+                             error=error or 'Report data not found')
+    
+    # Extract data
+    header = report_data.get('header', {})
+    bowler = header.get('bowler', {})
+    session = header.get('session', {})
+    video_summary = header.get('video_summary', {})
+    score_summary = header.get('score_summary', {})
+    classifications = report_data.get('classifications', [])
+    metrics = report_data.get('metrics', [])
+    
+    # Format date
+    created_at = header.get('created_at', '')
+    formatted_date = format_date(created_at)
+    
+    # Generate HTML components
+    overall_score = score_summary.get('overall_score', 0)
+    score_dial_html = generate_score_dial_html(overall_score)
+    thumbnails_html = generate_thumbnails_html(video_summary)
+    classification_cards_html = generate_classification_cards_html(classifications)
+    metric_cards_html = generate_metric_cards_html(metrics)
+    
+    # Get quick prompts and check coach availability
+    quick_prompts = get_quick_prompts()
+    coach_service = get_coach_service()
+    coach_available = coach_service.is_available
+    
+    return render_template('ReportPage.html',
+                         title=header.get('title', 'Bowling Analysis Report'),
+                         header=header,
+                         bowler=bowler,
+                         session=session,
+                         formatted_date=formatted_date,
+                         score_dial_html=score_dial_html,
+                         thumbnails_html=thumbnails_html,
+                         classifications=classifications,
+                         metrics=metrics,
+                         classification_cards_html=classification_cards_html,
+                         metric_cards_html=metric_cards_html,
+                         quick_prompts=quick_prompts,
+                         coach_available=coach_available,
+                         error=None)
+
+
+@app.route('/report-asset/<path:filepath>')
+def report_asset(filepath):
+    """Serve assets for the report page (images, screenshots, etc.)."""
+    # Serve files from the project root or from data/run/results
+    base_path = Path(__file__).parent.parent
+    
+    # Try the provided path first
+    full_path = base_path / filepath
+    
+    # If not found and starts with 'screenshots/', try data/run/results/screenshots/
+    if not full_path.exists() and filepath.startswith('screenshots/'):
+        full_path = base_path / 'data' / 'run' / 'results' / filepath
+    
+    if not full_path.exists():
+        return jsonify({"error": "Asset not found"}), 404
+    
+    return send_file(full_path)
+
+
 # ============== API Routes ==============
 
 @app.route('/api/tagging/state')
@@ -160,6 +250,56 @@ def api_pipeline_stream():
             'X-Accel-Buffering': 'no'
         }
     )
+
+
+# ============== Coach API Routes ==============
+
+@app.route('/api/coach/start', methods=['POST'])
+def api_coach_start():
+    """Get the initial coach message."""
+    logger.info("Coach: /api/coach/start called")
+    
+    coach_service = get_coach_service()
+    
+    if not coach_service.is_available:
+        logger.warning("Coach: Service not available")
+        return jsonify({
+            'ok': False,
+            'message': 'Coach service not available. Report may be missing.',
+            'history': []
+        })
+    
+    result = coach_service.get_initial_message()
+    return jsonify(result)
+
+
+@app.route('/api/coach/chat', methods=['POST'])
+def api_coach_chat():
+    """Handle a chat message from the user."""
+    data = request.get_json()
+    if not data:
+        return jsonify({'ok': False, 'message': 'No data provided', 'history': []}), 400
+    
+    user_message = data.get('message', '').strip()
+    history = data.get('history', [])
+    
+    if not user_message:
+        return jsonify({'ok': False, 'message': 'Empty message', 'history': history}), 400
+    
+    logger.info(f"Coach: /api/coach/chat called with message: {user_message[:50]}...")
+    
+    coach_service = get_coach_service()
+    
+    if not coach_service.is_available:
+        logger.warning("Coach: Service not available")
+        return jsonify({
+            'ok': False,
+            'message': 'Coach service not available. Report may be missing.',
+            'history': history
+        })
+    
+    result = coach_service.chat(user_message, history)
+    return jsonify(result)
 
 
 if __name__ == '__main__':

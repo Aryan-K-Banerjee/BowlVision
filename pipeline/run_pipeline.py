@@ -30,7 +30,10 @@ def _import_step(step_name: str):
 step_0 = _import_step('0_verify_data')
 step_1 = _import_step('1_preprocess')
 step_2 = _import_step('2_extract_keypoints')
+step_3 = _import_step('step_3_analyze_metrics')
+step_4_1 = _import_step('step_4_1_generate_screenshots')
 step_4_2 = _import_step('4.2_generate_videos')
+step_4_3 = _import_step('4.3_generate_report')
 
 
 SESSION_DIR = 'data/run/'
@@ -115,6 +118,34 @@ def run_pipeline(log: Optional[Callable[[str, int, str], None]] = None) -> Gener
         }
         return
     
+    # Step 3: Analyze metrics
+    collect_log("", 0, 'info')  # Empty line for spacing
+    yield {'type': 'status', 'status': 'running', 'step': 3, 'message': 'Analyzing metrics'}
+    
+    try:
+        results_path = step_3.run_step_3_analyze_metrics(SESSION_DIR)
+        collect_log(f"  Results saved to: {results_path}", 1, 'success')
+    except Exception as e:
+        collect_log(f"  Metrics analysis failed: {e}", 1, 'error')
+        yield {
+            'type': 'status',
+            'status': 'error',
+            'step': 3,
+            'message': f'Metrics analysis failed: {e}'
+        }
+        return
+    
+    # Step 4.1: Generate screenshots
+    collect_log("", 0, 'info')  # Empty line for spacing
+    yield {'type': 'status', 'status': 'running', 'step': 4, 'message': 'Generating screenshots'}
+    
+    try:
+        screenshot_paths = step_4_1.run_step_4_1_generate_screenshots(SESSION_DIR)
+        collect_log(f"  Generated {len(screenshot_paths)} screenshots", 1, 'success')
+    except Exception as e:
+        collect_log(f"  Screenshot generation failed: {e}", 1, 'error')
+        # Non-fatal - continue with video generation
+    
     # Step 4.2: Generate videos (validation)
     collect_log("", 0, 'info')  # Empty line for spacing
     yield {'type': 'status', 'status': 'running', 'step': 4, 'message': 'Generating validation videos'}
@@ -130,16 +161,26 @@ def run_pipeline(log: Optional[Callable[[str, int, str], None]] = None) -> Gener
         }
         return
     
-    # Success - Steps 1, 2, and 4.2 complete
+    # Step 4.3: Generate HTML report
+    collect_log("", 0, 'info')  # Empty line for spacing
+    yield {'type': 'status', 'status': 'running', 'step': 4, 'message': 'Generating HTML report'}
+    
+    try:
+        report_paths = step_4_3.run_step_4_3_generate_report(SESSION_DIR)
+        collect_log(f"  Generated report: {report_paths}", 1, 'success')
+    except Exception as e:
+        collect_log(f"  Report generation failed: {e}", 1, 'error')
+        # Non-fatal - continue
+    
+    # Success - all steps complete
     collect_log("", 0, 'info')  # Empty line
-    collect_log("> Pipeline complete (Steps 0, 1, 2, 4.2)", 0, 'info')
-    collect_log("- Steps 3, 4.1 not yet implemented", 1, 'info')
+    collect_log("> Pipeline complete (Steps 0, 1, 2, 3, 4.1, 4.2, 4.3)", 0, 'success')
     
     yield {
         'type': 'status', 
         'status': 'success', 
         'step': 4, 
-        'message': 'Steps 1, 2, 4.2 complete'
+        'message': 'Pipeline complete'
     }
 
 

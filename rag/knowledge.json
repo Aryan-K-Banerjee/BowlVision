@@ -1,0 +1,212 @@
+{
+  "version": "0.1",
+  "product_name": "BowlVision Coach",
+  "purpose": "Provide report-grounded coaching based on BowlVision report.json outputs. The coach must stay grounded in the supplied report context pack and the in-house coaching knowledge here. No invented measurements. Practical, fast, actionable advice.",
+  "tone_and_style": {
+    "voice": "Direct, coach-like, simple language. No fluff. Short paragraphs and bullet points. Occasional bold emphasis for key cues.",
+    "length_targets": {
+      "default": "6-14 bullets total",
+      "deep_dive": "up to ~300-500 words if user asks for detail",
+      "drills": "3-6 bullets per drill"
+    },
+    "format_rules": [
+      "Always mention the metric/classification name when referencing it.",
+      "When referencing a number, include the score/value and unit if provided by the report context.",
+      "If something is unknown, say so plainly and propose what data would be needed."
+    ]
+  },
+  "grounding_and_safety_rules": {
+    "hard_grounding": [
+      "Only use values present in the report context pack. Do not invent angles, frames, or scores.",
+      "If the report context pack does not include a needed field, state that it is not available.",
+      "Do not claim to diagnose injuries. Provide general training suggestions only."
+    ],
+    "response_contract": {
+      "must_include_when_possible": [
+        "Strengths (what is already good)",
+        "Priorities (top 1-3 fixes)",
+        "Action items (drills + cues)",
+        "Quick verification (how to self-check next session)"
+      ],
+      "must_avoid": [
+        "Medical diagnosis",
+        "Overconfident biomechanical claims not supported by report",
+        "Long essays unless requested"
+      ]
+    }
+  },
+  "context_pack_schema": {
+    "description": "The backend should build a compact context pack from the current run's report.json. The LLM sees ONLY this context pack + this knowledge.json + user messages.",
+    "fields": {
+      "bowler": ["name", "hand", "description", "image_path_optional"],
+      "session": ["name", "date", "description_optional"],
+      "video_summary": ["back_exists", "side_exists", "back_events_optional", "side_events_optional"],
+      "overall": ["overall_score", "grade_optional"],
+      "metrics": [
+        "id",
+        "name",
+        "score_optional",
+        "rating_optional",
+        "value_optional",
+        "unit_optional",
+        "description_optional",
+        "analysis_optional",
+        "extra_data_optional"
+      ],
+      "classifications": [
+        "id",
+        "name",
+        "rating_optional",
+        "value_optional",
+        "unit_optional",
+        "description_optional",
+        "analysis_optional",
+        "extra_data_optional"
+      ]
+    }
+  },
+  "coaching_framework": {
+    "prioritization_rules": [
+      "Start with the highest-impact issues that also have low scores or poor ratings.",
+      "If a metric score is 0-25: treat as urgent fix.",
+      "If 25-60: moderate fix, prioritize if it relates to pace/injury risk.",
+      "If 60-85: refine and stabilize.",
+      "If 85-100: maintain; use as strength cue."
+    ],
+    "defaults_when_missing": [
+      "If a metric is missing score/rating: label it as 'not computed' and do not infer quality.",
+      "If one view video does not exist: do not propose view-specific visual checks for that view."
+    ],
+    "session_plan_template": {
+      "name": "Mini Plan (2 weeks)",
+      "structure": [
+        "2 technical sessions",
+        "2 strength/plyo sessions",
+        "1 mixed session",
+        "1 recovery / mobility emphasis",
+        "1 optional review day"
+      ],
+      "rules": [
+        "Include only drills that are relevant to report findings.",
+        "Each session includes a warmup cue + 1-2 key drills + 1 constraint/cue for transfer."
+      ]
+    }
+  },
+  "rubrics": {
+    "metrics": {
+      "front_leg_brace": {
+        "what_it_means": "Stability and energy transfer through the front leg from FFC to release.",
+        "why_it_matters": ["pace transfer", "control", "injury risk reduction"],
+        "good_signs": ["knee stays firm after FFC", "hips come through over a stable base"],
+        "common_causes_if_poor": ["overstriding", "soft front knee", "lack of eccentric quad strength", "timing issue landing too early/late"],
+        "fix_cues": [
+          "Land tall, brace late (brace happens after plant, not before).",
+          "Imagine the front leg is a post; hips rotate around it."
+        ],
+        "drills": ["post-and-rotate", "braced-front-leg-wall-drill", "medicine-ball-hip-snap", "run-up-constraint-short-to-medium"]
+      },
+      "back_foot_stiffness": {
+        "what_it_means": "How stable/firm the back-foot contact is through BFC→FFC; too much heel lift can indicate collapsing/leaking.",
+        "why_it_matters": ["rhythm", "alignment", "power transfer"],
+        "good_signs": ["stable base at BFC", "controlled transition into FFC"],
+        "common_causes_if_poor": ["ankle stiffness limits", "weak calves/foot", "over-rotation", "too much forward collapse"],
+        "fix_cues": [
+          "Feel pressure through midfoot, not just toes.",
+          "Keep hips tall through BFC."
+        ],
+        "drills": ["ankle-stiffness-pogos", "single-leg-calf-iso", "bfc-hold-and-go", "march-to-bound"]
+      },
+      "lateral_flexion": {
+        "what_it_means": "Side lean at release; excessive lean can signal misalignment or compensation.",
+        "why_it_matters": ["accuracy", "spine load", "consistent release position"],
+        "good_signs": ["tall through release", "lean is controlled and repeatable"],
+        "common_causes_if_poor": ["front-on collapse", "weak trunk control", "head falling away", "chasing swing with body lean"],
+        "fix_cues": [
+          "Nose over toes at FFC; head stays stacked.",
+          "Finish tall, ribs down."
+        ],
+        "drills": ["tall-release-drill", "wall-line-alignment", "anti-lateral-flexion-carries", "bowling-with-stick-on-spine"]
+      },
+      "bowling_arm_delay": {
+        "what_it_means": "Whether the bowling arm stays 'back' longer into FFC (good delay) which can help whip and timing.",
+        "why_it_matters": ["speed potential", "better sequencing"],
+        "good_signs": ["arm is not rushing over early", "late acceleration into release"],
+        "common_causes_if_poor": ["rushing action", "weak shoulder stability", "poor rhythm"],
+        "fix_cues": [
+          "Let the front side pull you through before the arm goes.",
+          "Feel 'late and fast' not 'early and forced'."
+        ],
+        "drills": ["pause-at-ffc-then-go", "towel-whip-sequencing", "non-bowling-arm-lead"]
+      },
+      "non_bowling_arm_extension": {
+        "what_it_means": "Front-side (non-bowling arm) drive and extension that helps create separation and keeps action stable.",
+        "why_it_matters": ["alignment", "pace", "reduces falling away"],
+        "good_signs": ["strong front arm pull-down", "stable head"],
+        "common_causes_if_poor": ["lazy front arm", "opening too early", "weak upper back control"],
+        "fix_cues": [
+          "Reach up then rip down (elbow leads).",
+          "Front arm sets the line."
+        ],
+        "drills": ["reach-and-rip", "banded-front-arm-pull", "one-step-bowl-front-arm-focus"]
+      }
+    },
+    "classifications": {
+      "bowler_alignment": {
+        "what_it_means": "Side-on vs front-on vs mixed alignment.",
+        "why_it_matters": ["consistency", "load on back", "release position"],
+        "coaching_notes": [
+          "Side-on often supports swing and seam control.",
+          "Mixed can be fine but must be repeatable and safe.",
+          "Do not 'force' alignment changes without gradual progression."
+        ]
+      },
+      "hip_vs_knee_dominance": {
+        "what_it_means": "Whether movement strategy relies more on hip hinge vs knee bend patterns.",
+        "why_it_matters": ["power source", "bracing behavior", "timing"],
+        "coaching_notes": [
+          "Knee-dominant can still be fast, but watch bracing and posture.",
+          "Hip-dominant often pairs with strong hip snap if timed well."
+        ]
+      }
+    }
+  },
+  "drill_library": {
+    "post-and-rotate": {
+      "goal": "Feel braced front leg + hips rotating around it.",
+      "how": [
+        "Mark a front-foot plant spot.",
+        "Step in, plant, pause 1 beat, then rotate hips and simulate release.",
+        "Keep head stacked and chest tall."
+      ],
+      "dosage": ["3 sets x 6 reps", "rest 45-60s"],
+      "watch_for": ["front knee collapsing", "leaning away", "overstriding"]
+    },
+    "ankle-stiffness-pogos": {
+      "goal": "Increase ankle stiffness and reactive strength.",
+      "how": ["Small pogo jumps, minimal knee bend, stay tall."],
+      "dosage": ["3 x 20-30s", "rest 60s"],
+      "watch_for": ["pain in Achilles", "heels slamming down"]
+    },
+    "wall-line-alignment": {
+      "goal": "Reduce lateral flexion and keep release tall.",
+      "how": [
+        "Stand side-on near a wall line.",
+        "Simulate delivery keeping head and ribs from drifting sideways.",
+        "Use slow reps then speed up."
+      ],
+      "dosage": ["2-3 x 8 reps"],
+      "watch_for": ["over-arching lower back", "shrugging shoulders"]
+    }
+  },
+  "ui_copy": {
+    "coach_cta": "Chat with BowlVision Coach",
+    "coach_welcome_title": "BowlVision Coach",
+    "coach_welcome_message": "I’m using your report to give grounded coaching. Ask for: top fixes, a 2-week plan, or what a metric means.",
+    "quick_prompts": [
+      "Summarize my action in 5 bullets",
+      "Top 3 fixes with drills",
+      "Give me a 2-week plan",
+      "Explain my lowest metric and how to fix it"
+    ]
+  }
+}

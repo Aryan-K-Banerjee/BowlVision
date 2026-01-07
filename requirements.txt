@@ -1,6 +1,7 @@
 # App Shell
 flask
 pywebview
+python-dotenv
 
 # Pipeline
 opencv-python
@@ -8,3 +9,6 @@ mediapipe
 numpy
 pandas
 pyyaml
+
+# Coach Chat (RAG)
+google-genai

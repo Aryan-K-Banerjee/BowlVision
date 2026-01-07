@@ -1,0 +1,653 @@
+{
+  "header": {
+    "title": "Bowling Analysis Report",
+    "created_at": "2026-01-06T14:58:01.348855Z",
+    "bowler": {
+      "name": "Aryan Banerjee",
+      "hand": "Right",
+      "description": "Tall right-arm quick who attacks the stumps and works in-swing with a firm front leg brace.",
+      "image_path": "data/run/a_inputs/bowler_image.jpg"
+    },
+    "session": {
+      "name": "Practice at the Black Field",
+      "date": "2026-01-06",
+      "description": "Tall right-arm quick who attacks the stumps and works in-swing with a firm front leg brace."
+    },
+    "video_summary": {
+      "side_view": {
+        "exists": true,
+        "events": {
+          "Jump": 60,
+          "BFC": 66,
+          "FFC": 75,
+          "Release": 78
+        }
+      },
+      "back_view": {
+        "exists": true,
+        "events": {
+          "Jump": 60,
+          "BFC": 67,
+          "FFC": 75,
+          "Release": 78
+        }
+      },
+      "screenshots": [
+        {
+          "view": "side",
+          "frames": [
+            60
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "square_around_bowler",
+          "output_name": "video_summary_side_jump"
+        },
+        {
+          "view": "side",
+          "frames": [
+            66
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "square_around_bowler",
+          "output_name": "video_summary_side_bfc"
+        },
+        {
+          "view": "side",
+          "frames": [
+            75
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "square_around_bowler",
+          "output_name": "video_summary_side_ffc"
+        },
+        {
+          "view": "side",
+          "frames": [
+            78
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "square_around_bowler",
+          "output_name": "video_summary_side_release"
+        },
+        {
+          "view": "back",
+          "frames": [
+            60
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "square_around_bowler",
+          "output_name": "video_summary_back_jump"
+        },
+        {
+          "view": "back",
+          "frames": [
+            67
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "square_around_bowler",
+          "output_name": "video_summary_back_bfc"
+        },
+        {
+          "view": "back",
+          "frames": [
+            75
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "square_around_bowler",
+          "output_name": "video_summary_back_ffc"
+        },
+        {
+          "view": "back",
+          "frames": [
+            78
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "square_around_bowler",
+          "output_name": "video_summary_back_release"
+        }
+      ]
+    },
+    "score_summary": {
+      "overall_score": 62.6,
+      "metric_scores": {
+        "front_leg_brace": {
+          "score": 100,
+          "weight": 1.5,
+          "rating": "full_brace"
+        },
+        "back_foot_stiffness": {
+          "score": 0,
+          "weight": 1.0,
+          "rating": "flexible"
+        },
+        "lateral_flexion": {
+          "score": 7.2,
+          "weight": 1.2,
+          "rating": "poor"
+        },
+        "bowling_arm_delay": {
+          "score": 100,
+          "weight": 1.3,
+          "rating": "excellent"
+        },
+        "non_bowling_arm_extension": {
+          "score": 86.9,
+          "weight": 1.0,
+          "rating": "excellent"
+        }
+      },
+      "metric_weights": {
+        "front_leg_brace": 1.5,
+        "back_foot_stiffness": 1.0,
+        "lateral_flexion": 1.2,
+        "bowling_arm_delay": 1.3,
+        "non_bowling_arm_extension": 1.0
+      },
+      "grade": "C"
+    }
+  },
+  "classifications": [
+    {
+      "id": "hip_vs_knee_dominance",
+      "name": "Hip vs Knee Dominance",
+      "group": "Classification",
+      "value": 109.81962109112398,
+      "unit": "degrees",
+      "score": null,
+      "rating": "knee_dominant",
+      "tags": [],
+      "description": "Classifies bowler as hip dominant or knee dominant based on back knee flexion at BFC",
+      "analysis": "Back knee at BFC - Back view: 109.8\u00b0, Side view: 174.8\u00b0. Classification: Knee Dominant",
+      "screenshots": [
+        {
+          "view": "back",
+          "frames": [
+            67
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "back_knee"
+          ],
+          "angle_value": 109.81962109112398,
+          "crop_strategy": "square_around_bowler",
+          "output_name": "classification_hip_knee_back"
+        },
+        {
+          "view": "side",
+          "frames": [
+            66
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "back_knee"
+          ],
+          "angle_value": 174.8167764860706,
+          "crop_strategy": "square_around_bowler",
+          "output_name": "classification_hip_knee_side"
+        }
+      ],
+      "extra_data": {
+        "classification": "knee_dominant",
+        "back_angle_back_view": 109.81962109112398,
+        "back_angle_side_view": 174.8167764860706,
+        "bfc_frame_back": 67,
+        "bfc_frame_side": 66
+      }
+    },
+    {
+      "id": "bowler_alignment",
+      "name": "Bowler Alignment",
+      "group": "Classification",
+      "value": 40.29116067637346,
+      "unit": "degrees",
+      "score": null,
+      "rating": "side_on",
+      "tags": [],
+      "description": "Classifies bowler as side-on, front-on, or mixed based on foot orientation",
+      "analysis": "Back foot orientation at FFC: 40.3\u00b0 (back view). Classification: Side On",
+      "screenshots": [
+        {
+          "view": "back",
+          "frames": [
+            75
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "back_foot"
+          ],
+          "angle_value": 40.29116067637346,
+          "crop_strategy": "full_body",
+          "output_name": "classification_alignment_back"
+        },
+        {
+          "view": "side",
+          "frames": [
+            75
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "back_foot"
+          ],
+          "angle_value": 78.97026308334837,
+          "crop_strategy": "full_body",
+          "output_name": "classification_alignment_side"
+        }
+      ],
+      "extra_data": {
+        "classification": "side_on",
+        "foot_angle_back_view": 40.29116067637346,
+        "foot_angle_side_view": 78.97026308334837,
+        "ffc_frame_back": 75,
+        "ffc_frame_side": 75
+      }
+    }
+  ],
+  "metrics": [
+    {
+      "id": "front_leg_brace",
+      "name": "Front Leg Brace",
+      "group": "Metric",
+      "value": 185.74114561567606,
+      "unit": "degrees",
+      "score": 100,
+      "rating": "full_brace",
+      "tags": [],
+      "description": "Measures front knee extension from FFC to release",
+      "analysis": "Front knee at FFC: 191.6\u00b0, at Release: 185.7\u00b0 (-5.9\u00b0). Rating: Full Brace",
+      "screenshots": [
+        {
+          "view": "side",
+          "frames": [
+            75
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "front_knee"
+          ],
+          "angle_value": 191.63723302826745,
+          "crop_strategy": "front_leg_focus",
+          "output_name": "metric_front_leg_brace_ffc"
+        },
+        {
+          "view": "side",
+          "frames": [
+            78
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "front_knee"
+          ],
+          "angle_value": 185.74114561567606,
+          "crop_strategy": "front_leg_focus",
+          "output_name": "metric_front_leg_brace_release"
+        },
+        {
+          "view": "side",
+          "frames": [
+            75,
+            78
+          ],
+          "blended": true,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "front_knee"
+          ],
+          "angle_value": null,
+          "crop_strategy": "front_leg_focus",
+          "output_name": "metric_front_leg_brace_comparison"
+        }
+      ],
+      "extra_data": {
+        "score": 100,
+        "angle_at_ffc": 191.63723302826745,
+        "angle_at_release": 185.74114561567606,
+        "angle_change": -5.896087412591385,
+        "ffc_frame": 75,
+        "release_frame": 78
+      }
+    },
+    {
+      "id": "back_foot_stiffness",
+      "name": "Back Foot Stiffness",
+      "group": "Metric",
+      "value": 78.97026308334837,
+      "unit": "degrees",
+      "score": 0,
+      "rating": "flexible",
+      "tags": [],
+      "description": "Measures back foot heel elevation from BFC to FFC",
+      "analysis": "Back foot elevation - BFC (side): 14.6\u00b0, FFC (side): 79.0\u00b0. Max elevation: 79.0\u00b0. Rating: Flexible",
+      "screenshots": [
+        {
+          "view": "side",
+          "frames": [
+            66
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "back_foot"
+          ],
+          "angle_value": 14.633347666989332,
+          "crop_strategy": "back_foot_focus",
+          "output_name": "metric_back_foot_stiffness_bfc"
+        },
+        {
+          "view": "side",
+          "frames": [
+            75
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "back_foot"
+          ],
+          "angle_value": 78.97026308334837,
+          "crop_strategy": "back_foot_focus",
+          "output_name": "metric_back_foot_stiffness_ffc"
+        },
+        {
+          "view": "back",
+          "frames": [
+            67
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "back_foot"
+          ],
+          "angle_value": 24.63477966671966,
+          "crop_strategy": "full_body",
+          "output_name": "metric_back_foot_stiffness_bfc_back"
+        }
+      ],
+      "extra_data": {
+        "score": 0,
+        "angle_at_bfc_side": 14.633347666989332,
+        "angle_at_ffc_side": 78.97026308334837,
+        "angle_at_bfc_back": 24.63477966671966,
+        "angle_at_ffc_back": 40.29116067637346,
+        "max_elevation": 78.97026308334837,
+        "bfc_frame_side": 66,
+        "ffc_frame_side": 75,
+        "bfc_frame_back": 67,
+        "ffc_frame_back": 75
+      }
+    },
+    {
+      "id": "lateral_flexion",
+      "name": "Lateral Flexion",
+      "group": "Metric",
+      "value": 41.7773894392725,
+      "unit": "degrees",
+      "score": 7.2,
+      "rating": "poor",
+      "tags": [],
+      "description": "Measures spine lateral flexion at release - how much the bowler leans sideways",
+      "analysis": "Lateral flexion at release: 41.8\u00b0 (side view). Rating: Poor. Less lean = better alignment.",
+      "screenshots": [
+        {
+          "view": "side",
+          "frames": [
+            78
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "lateral_flexion"
+          ],
+          "angle_value": 41.7773894392725,
+          "crop_strategy": "upper_body",
+          "output_name": "metric_lateral_flexion_side"
+        },
+        {
+          "view": "back",
+          "frames": [
+            78
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "lateral_flexion"
+          ],
+          "angle_value": 42.96493016298106,
+          "crop_strategy": "upper_body",
+          "output_name": "metric_lateral_flexion_back"
+        }
+      ],
+      "extra_data": {
+        "score": 7.2,
+        "angle_at_release_side": 41.7773894392725,
+        "angle_at_release_back": 42.96493016298106,
+        "release_frame_side": 78,
+        "release_frame_back": 78
+      }
+    },
+    {
+      "id": "bowling_arm_delay",
+      "name": "Bowling Arm Delay",
+      "group": "Metric",
+      "value": -166.6643421349517,
+      "unit": "degrees",
+      "score": 100,
+      "rating": "excellent",
+      "tags": [],
+      "description": "Measures bowling arm position relative to horizontal at FFC - below is better",
+      "analysis": "Bowling arm at FFC: 166.7\u00b0 below horizontal. Rating: Excellent. Below horizontal = good delay.",
+      "screenshots": [
+        {
+          "view": "side",
+          "frames": [
+            75
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "bowling_arm"
+          ],
+          "angle_value": -166.6643421349517,
+          "crop_strategy": "bowling_arm_focus",
+          "output_name": "metric_bowling_arm_delay_ffc"
+        }
+      ],
+      "extra_data": {
+        "score": 100,
+        "angle_at_ffc": -166.6643421349517,
+        "ffc_frame": 75
+      }
+    },
+    {
+      "id": "non_bowling_arm_extension",
+      "name": "Non-Bowling Arm Extension",
+      "group": "Metric",
+      "value": 168.19848501518624,
+      "unit": "degrees",
+      "score": 86.9,
+      "rating": "excellent",
+      "tags": [],
+      "description": "Measures maximum extension of non-bowling arm between BFC and FFC",
+      "analysis": "Maximum non-bowling arm extension: 168.2\u00b0 at frame 70. Rating: Excellent. Fuller extension = better.",
+      "screenshots": [
+        {
+          "view": "side",
+          "frames": [
+            70
+          ],
+          "blended": false,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [
+            "non_bowling_arm"
+          ],
+          "angle_value": 168.19848501518624,
+          "crop_strategy": "non_bowling_arm_focus",
+          "output_name": "metric_non_bowling_arm_max"
+        },
+        {
+          "view": "side",
+          "frames": [
+            66,
+            75
+          ],
+          "blended": true,
+          "types": [
+            "original",
+            "skeleton",
+            "overlay"
+          ],
+          "angles": [],
+          "crop_strategy": "upper_body",
+          "output_name": "metric_non_bowling_arm_comparison"
+        }
+      ],
+      "extra_data": {
+        "score": 86.9,
+        "max_angle": 168.19848501518624,
+        "max_angle_frame": 70,
+        "bfc_frame": 66,
+        "ffc_frame": 75
+      }
+    }
+  ],
+  "summary": {
+    "total_classifications": 2,
+    "total_metrics": 5,
+    "classifications_summary": {
+      "hip_vs_knee_dominance": "knee_dominant",
+      "bowler_alignment": "side_on"
+    },
+    "metrics_summary": {
+      "front_leg_brace": {
+        "rating": "full_brace",
+        "score": 100
+      },
+      "back_foot_stiffness": {
+        "rating": "flexible",
+        "score": 0
+      },
+      "lateral_flexion": {
+        "rating": "poor",
+        "score": 7.2
+      },
+      "bowling_arm_delay": {
+        "rating": "excellent",
+        "score": 100
+      },
+      "non_bowling_arm_extension": {
+        "rating": "excellent",
+        "score": 86.9
+      }
+    },
+    "overall_score": 62.6,
+    "grade": "C"
+  }
+}
